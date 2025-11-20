@@ -1,0 +1,29 @@
+package modelo;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Conexion {
+    // lo creamos en el mismo paquete de modelo
+    // Datos de tu base de datos
+    private final String base = "nombre_de_tu_base_de_datos"; // <--- PON EL NOMBRE AQUÍ
+    private final String user = "root"; // Tu usuario (usualmente root)
+    private final String password = "tu_contraseña"; // <--- PON TU CLAVE AQUÍ
+    private final String url = "jdbc:mysql://localhost:3306/" + base;
+    private Connection con = null;
+
+    public Connection getConexion() {
+        try {
+            // Cargar el driver (clase necesaria para que Java hable con MySQL)
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            // Establecer la conexión
+            con = DriverManager.getConnection(url, user, password);
+            
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println("Error de conexión: " + e);
+        }
+        return con;
+    }
+}

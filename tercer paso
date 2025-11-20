@@ -1,0 +1,97 @@
+package modelo;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class ConsultasProducto extends Conexion {
+
+    // 1. Método para REGISTRAR (Insertar)
+    public boolean registrar(Producto pro) {
+        PreparedStatement ps = null;
+        Connection con = getConexion();
+
+        // Los signos de interrogación (?) son huecos que llenaremos después
+        String sql = "INSERT INTO productos (id, descripcion, categoria, costo, precio, activo) VALUES (?,?,?,?,?,?)";
+
+        try {
+            ps = con.prepareStatement(sql);
+            // Llenamos los huecos (?) con los datos del objeto Producto
+            ps.setInt(1, pro.getId());
+            ps.setString(2, pro.getDescripcion());
+            ps.setString(3, pro.getCategoria());
+            ps.setDouble(4, pro.getCosto());
+            ps.setDouble(5, pro.getPrecio());
+            ps.setString(6, pro.getActivo());
+
+            ps.execute(); // Ejecuta el SQL
+            return true;  // Si todo sale bien, retorna verdadero
+
+        } catch (SQLException e) {
+            System.err.println(e);
+            return false; // Si falla, retorna falso
+        } finally {
+            try {
+                con.close(); // Siempre cerramos la conexión al terminar
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        }
+    }
+
+    // 2. Método para MODIFICAR (Update)
+    public boolean modificar(Producto pro) {
+        PreparedStatement ps = null;
+        Connection con = getConexion();
+
+        String sql = "UPDATE productos SET descripcion=?, categoria=?, costo=?, precio=?, activo=? WHERE id=?";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, pro.getDescripcion());
+            ps.setString(2, pro.getCategoria());
+            ps.setDouble(3, pro.getCosto());
+            ps.setDouble(4, pro.getPrecio());
+            ps.setString(5, pro.getActivo());
+            ps.setInt(6, pro.getId()); // El ID va al final por el WHERE
+
+            ps.execute();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println(e);
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        }
+    }
+
+    // 3. Método para ELIMINAR (Delete)
+    public boolean eliminar(Producto pro) {
+        PreparedStatement ps = null;
+        Connection con = getConexion();
+
+        String sql = "DELETE FROM productos WHERE id=?";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, pro.getId());
+            ps.execute();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println(e);
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+package app; // O el paquete que uses
+
+import controlador.CtrlProducto;
+import modelo.ConsultasProducto;
+import modelo.Producto;
+import vista.frmProducto;
+
+public class Principal {
+    
+    public static void main(String[] args) {
+        // 1. Instanciamos el Modelo (Datos)
+        Producto mod = new Producto();
+        ConsultasProducto modC = new ConsultasProducto();
+        
+        // 2. Instanciamos la Vista (Ventana)
+        frmProducto vis = new frmProducto();
+        
+        // 3. Instanciamos el Controlador y le pasamos los dos anteriores
+        CtrlProducto ctrl = new CtrlProducto(mod, modC, vis);
+        
+        // 4. Arrancamos
+        ctrl.iniciar();
+        vis.setVisible(true);
+    }
+}

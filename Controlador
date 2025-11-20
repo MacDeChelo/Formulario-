@@ -1,0 +1,127 @@
+package controlador;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter; // Para el clic del mouse
+import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
+import modelo.ConsultasProducto;
+import modelo.Producto;
+import vista.frmProducto;
+
+// Implements ActionListener: Nos permite escuchar clics de botones
+public class CtrlProducto implements ActionListener {
+
+    // Declaramos las piezas que vamos a manejar
+    private Producto mod;
+    private ConsultasProducto modC;
+    private frmProducto vis;
+
+    // Constructor: Recibe las piezas y las conecta
+    public CtrlProducto(Producto mod, ConsultasProducto modC, frmProducto vis) {
+        this.mod = mod;
+        this.modC = modC;
+        this.vis = vis;
+
+        // "Oye botón, cuando te hagan clic, avísame a mí (this)"
+        this.vis.btnAgregar.addActionListener(this);
+        this.vis.btnModificar.addActionListener(this);
+        this.vis.btnEliminar.addActionListener(this);
+        this.vis.btnLimpiar.addActionListener(this);
+        
+        // Escuchar clic en la tabla para subir los datos
+        this.vis.tablaProductos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                llenarCampos();
+            }
+        });
+    }
+
+    // Este método arranca la ventana
+    public void iniciar() {
+        vis.setTitle("Productos MVC - Tienda");
+        vis.setLocationRelativeTo(null);
+        vis.txtIDOculto.setVisible(false); // Aseguramos que esté oculto
+        vis.setVisible(true);
+    }
+
+    // AQUÍ ES DONDE OCURRE LA MAGIA DE LOS BOTONES
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        // 1. BOTÓN GUARDAR
+        if (e.getSource() == vis.btnAgregar) {
+            // Pasamos datos de la Vista al Modelo
+            mod.setId(Integer.parseInt(vis.txtID.getText()));
+            mod.setDescripcion(vis.txtDescripcion.getText());
+            mod.setCategoria(vis.cmbCategoria.getSelectedItem().toString());
+            mod.setCosto(Double.parseDouble(vis.txtCosto.getText()));
+            mod.setPrecio(Double.parseDouble(vis.txtPrecio.getText()));
+            mod.setActivo(vis.chkActivo.isSelected() ? "Sí" : "No"); // Ternario: Si está select, guarda "Sí"
+
+            // Llamamos al DAO para guardar en BD
+            if (modC.registrar(mod)) {
+                JOptionPane.showMessageDialog(null, "Registro Guardado");
+                limpiar();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al Guardar");
+            }
+        }
+
+        // 2. BOTÓN MODIFICAR
+        if (e.getSource() == vis.btnModificar) {
+            // Usamos los mismos datos, pero para actualizar
+            mod.setId(Integer.parseInt(vis.txtID.getText())); // Ojo: Aquí deberíamos usar el IDOculto idealmente, pero usaremos el del texto por ahora
+            mod.setDescripcion(vis.txtDescripcion.getText());
+            mod.setCategoria(vis.cmbCategoria.getSelectedItem().toString());
+            mod.setCosto(Double.parseDouble(vis.txtCosto.getText()));
+            mod.setPrecio(Double.parseDouble(vis.txtPrecio.getText()));
+            mod.setActivo(vis.chkActivo.isSelected() ? "Sí" : "No");
+
+            if (modC.modificar(mod)) {
+                JOptionPane.showMessageDialog(null, "Registro Modificado");
+                limpiar();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al Modificar");
+            }
+        }
+
+        // 3. BOTÓN ELIMINAR
+        if (e.getSource() == vis.btnEliminar) {
+            mod.setId(Integer.parseInt(vis.txtID.getText()));
+            
+            if (modC.eliminar(mod)) {
+                JOptionPane.showMessageDialog(null, "Registro Eliminado");
+                limpiar();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al Eliminar");
+            }
+        }
+
+        // 4. BOTÓN LIMPIAR
+        if (e.getSource() == vis.btnLimpiar) {
+            limpiar();
+        }
+    }
+    
+    // Método auxiliar para limpiar las cajas de texto
+    public void limpiar() {
+        vis.txtID.setText("");
+        vis.txtDescripcion.setText("");
+        vis.txtCosto.setText("");
+        vis.txtPrecio.setText("");
+        vis.chkActivo.setSelected(true);
+    }
+    
+    // Método para subir datos de la tabla a los cuadros de texto (Simplificado para el ejemplo)
+    // Nota: En un MVC puro, llenaríamos la tabla leyendo la BD primero.
+    // Por ahora, simularemos la funcionalidad visual.
+    private void llenarCampos() {
+        // Como no hemos cargado la tabla desde la BD en este paso, 
+        // este método funcionará cuando agreguemos la función "Listar" más adelante.
+        // Pero dejamos la estructura lista.
+        int fila = vis.tablaProductos.getSelectedRow();
+        // Aquí iría la lógica para tomar datos de la tabla y ponerlos en los txt
+    }
+}

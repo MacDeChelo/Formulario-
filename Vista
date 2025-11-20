@@ -1,0 +1,124 @@
+package vista;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
+import java.awt.Font;
+
+public class frmProducto extends JFrame {
+
+    // 1. Los hacemos PUBLICOS para que el Controlador pueda tocarlos
+    public JTextField txtID, txtDescripcion, txtCantidad, txtCosto, txtPrecio;
+    public JComboBox<String> cmbCategoria;
+    public JCheckBox chkActivo;
+    public JTable tablaProductos;
+    public DefaultTableModel modelo; // El modelo de la tabla
+    public JButton btnAgregar, btnModificar, btnEliminar, btnLimpiar;
+    public JTextField txtIDOculto; // Truco para guardar el ID cuando modifiquemos
+
+    public frmProducto() {
+        // --- Configuración de la Ventana ---
+        setLayout(null);
+        setTitle("Gestión de Productos - MVC");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        
+        // Título Azul
+        JLabel titulo = new JLabel("  Productos (Sistema MVC)", JLabel.LEFT);
+        titulo.setOpaque(true);
+        titulo.setBackground(new Color(0, 153, 255));
+        titulo.setForeground(Color.WHITE);
+        titulo.setFont(new Font("Arial", Font.BOLD, 20));
+        titulo.setBounds(0, 0, 800, 40);
+        add(titulo);
+
+        // --- PANEL DE DATOS ---
+        JPanel panelDatos = new JPanel();
+        panelDatos.setLayout(null);
+        panelDatos.setBounds(10, 50, 760, 160);
+        TitledBorder borde = BorderFactory.createTitledBorder("Datos del producto");
+        panelDatos.setBorder(borde);
+        add(panelDatos);
+
+        // --- Campos del Formulario ---
+        // ID (Visible)
+        JLabel lblID = new JLabel("ID:");
+        lblID.setBounds(20, 30, 80, 25);
+        panelDatos.add(lblID);
+
+        txtID = new JTextField();
+        txtID.setBounds(100, 30, 150, 25);
+        panelDatos.add(txtID);
+        
+        // Campo Oculto (truco para guardar el ID real al editar)
+        txtIDOculto = new JTextField();
+        txtIDOculto.setVisible(false); // No se ve, pero guarda datos
+        add(txtIDOculto);
+
+        // Descripción y Costo
+        JLabel lblDesc = new JLabel("Descripción:");
+        lblDesc.setBounds(20, 65, 80, 25);
+        panelDatos.add(lblDesc);
+
+        txtDescripcion = new JTextField();
+        txtDescripcion.setBounds(100, 65, 250, 25);
+        panelDatos.add(txtDescripcion);
+
+        JLabel lblCosto = new JLabel("Costo:");
+        lblCosto.setBounds(400, 65, 60, 25);
+        panelDatos.add(lblCosto);
+
+        txtCosto = new JTextField();
+        txtCosto.setBounds(460, 65, 120, 25);
+        panelDatos.add(txtCosto);
+
+        // Categoría, Precio y Estado
+        JLabel lblCat = new JLabel("Categoría:");
+        lblCat.setBounds(20, 100, 80, 25);
+        panelDatos.add(lblCat);
+
+        cmbCategoria = new JComboBox<>(new String[]{"Aseo", "Comestibles", "Bebidas", "Electrónica"});
+        cmbCategoria.setBounds(100, 100, 150, 25);
+        panelDatos.add(cmbCategoria);
+
+        JLabel lblPrecio = new JLabel("Precio:");
+        lblPrecio.setBounds(400, 100, 60, 25);
+        panelDatos.add(lblPrecio);
+
+        txtPrecio = new JTextField();
+        txtPrecio.setBounds(460, 100, 120, 25);
+        panelDatos.add(txtPrecio);
+
+        chkActivo = new JCheckBox("Activo");
+        chkActivo.setBounds(600, 100, 100, 25);
+        chkActivo.setSelected(true);
+        panelDatos.add(chkActivo);
+
+        // --- TABLA ---
+        String[] columnas = {"ID", "Descripción", "Categoría", "Costo", "Precio", "Activo"};
+        modelo = new DefaultTableModel(null, columnas);
+        tablaProductos = new JTable(modelo);
+        JScrollPane scroll = new JScrollPane(tablaProductos);
+        scroll.setBounds(10, 220, 760, 250);
+        add(scroll);
+
+        // --- BOTONES (Públicos) ---
+        btnAgregar = new JButton("Guardar");
+        btnAgregar.setBounds(50, 500, 120, 30);
+        add(btnAgregar);
+
+        btnModificar = new JButton("Modificar");
+        btnModificar.setBounds(190, 500, 120, 30);
+        add(btnModificar);
+
+        btnEliminar = new JButton("Eliminar");
+        btnEliminar.setBounds(330, 500, 120, 30);
+        add(btnEliminar);
+        
+        btnLimpiar = new JButton("Limpiar");
+        btnLimpiar.setBounds(470, 500, 120, 30);
+        add(btnLimpiar);
+    }
+}
